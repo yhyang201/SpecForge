@@ -807,8 +807,8 @@ class LlamaForCausalLMEagle3(Eagle3DraftModel):
             config.hidden_size, config.draft_vocab_size, bias=False
         )
         self.load_from_target_last_layer(
-            model_path="Qwen/Qwen2.5-Math-7B",
-            layer_idx=27,
+            model_path="meta-llama/Llama-3.1-8B",
+            layer_idx=31,
             attention_backend=attention_backend,
         )
         # create vocab buffers
