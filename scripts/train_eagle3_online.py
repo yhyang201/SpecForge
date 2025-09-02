@@ -224,6 +224,8 @@ def main():
 
     tracker = create_tracker(args, args.output_dir)
 
+    print(f"227 {args.attention_backend=}")
+
     # Handle draft model config
     if args.draft_model_config is None:
         # Auto-generate and save config file
@@ -296,6 +298,7 @@ def main():
             .to(torch.bfloat16)
         )
     else:
+        print(f"301 {args.attention_backend=}")
         draft_model = (
             AutoEagle3DraftModel.from_config(
                 draft_model_config, attention_backend=args.attention_backend
