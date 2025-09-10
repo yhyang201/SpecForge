@@ -80,6 +80,7 @@ class GptOssTopKRouter(GptOssTopKRouterBase):
         if aux_loss_coeff == 0:
             return probs
         tokens_per_expert = routing_map.sum(dim=0)
+        print(f"{self.step=}, {tokens_per_expert=}")
         num_tokens = routing_map.shape[0]
         total_num_tokens = num_tokens * 1
 
@@ -193,6 +194,7 @@ class GptOssTopKRouter(GptOssTopKRouterBase):
     ):
         """Attach aux loss function to activation and add to logging."""
         num_layers = self.num_hidden_layers
+        print(f"{aux_loss_name}: {aux_loss.detach().item()}")
         save_to_aux_losses_tracker(
             aux_loss_name,
             aux_loss / aux_loss_coeff,

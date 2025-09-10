@@ -137,9 +137,9 @@ class WandbTracker(Tracker):
             )
             self.is_initialized = True
 
-    def log(self, log_dict: Dict[str, Any], step: Optional[int] = None):
+    def log(self, log_dict: Dict[str, Any], step: Optional[int] = None, commit: bool = True):
         if self.rank == 0 and self.is_initialized:
-            wandb.log(log_dict, step=step)
+            wandb.log(log_dict, step=step, commit=commit)
 
     def close(self):
         if self.rank == 0 and self.is_initialized and wandb.run:

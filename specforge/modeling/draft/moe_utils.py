@@ -105,12 +105,12 @@ def save_to_aux_losses_tracker(
 
     # Create log dict with the aux loss
     log_dict = {
-        f"aux/aux_loss": loss.detach().item()
+        f"aux/{name}": loss.detach().item()
     }
         
     # Log to tracker·
     # ignore step for now, use get_step_counter 
-    get_tracker().log(log_dict, step=get_step_counter())
+    get_tracker().log(log_dict, step=get_step_counter(), commit=False)
 
 class MoEAuxLossAutoScaler(torch.autograd.Function):
     """An AutoScaler that triggers the backward pass and scales the grad for auxiliary loss."""
