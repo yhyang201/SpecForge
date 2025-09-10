@@ -33,7 +33,7 @@ from specforge.distributed import (
     init_distributed,
 )
 from specforge.optimizer import BF16Optimizer
-from specforge.tracker import create_tracker, get_tracker_class
+from specforge.tracker import create_tracker, get_tracker_class, set_step_counter
 from specforge.utils import (
     create_draft_config_from_target,
     get_last_checkpoint,
@@ -536,6 +536,8 @@ def main():
             if batch_index % args.draft_accumulation_steps == 0:
                 optimizer.step()
                 global_step += 1
+                # Update global step counter for aux loss logging
+                set_step_counter(global_step)
                 if global_step % args.log_steps == 0:
                     tracker.log(log_dict, step=global_step)
                 log_dict = defaultdict(float)

@@ -291,10 +291,27 @@ def get_tracker_class(report_to: str) -> Optional[Tracker]:
     """Returns the tracker class based on the name."""
     return TRACKER_REGISTRY.get(report_to)
 
+_GLOBAL_TRACKER = None
+_GLOBAL_STEP_COUNTER = 0
 
 def create_tracker(args, output_dir: str) -> Tracker:
     """Factory function to create an experiment tracker instance."""
     tracker_class = get_tracker_class(args.report_to)
     if not tracker_class:
         raise ValueError(f"Unsupported report_to type: {args.report_to}")
-    return tracker_class(args, output_dir)
+    global _GLOBAL_TRACKER
+    _GLOBAL_TRACKER = tracker_class(args, output_dir)
+    return _GLOBAL_TRACKER
+
+def get_tracker():
+    if _GLOBAL_TRACKER is None:
+        raise RuntimeError("Tracker not initialized. Call init_tracker() first.")
+    return _GLOBAL_TRACKER
+
+def set_step_counter(step: int):
+    global _GLOBAL_STEP_COUNTER
+    _GLOBAL_STEP_COUNTER = step
+
+def get_step_counter():
+    global _GLOBAL_STEP_COUNTER
+    return _GLOBAL_STEP_COUNTER
