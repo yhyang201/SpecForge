@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional, Tuple
 
+import math
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -30,6 +31,10 @@ class GptOssTopKRouter(GptOssTopKRouterBase):
         self.num_hidden_layers = config.num_hidden_layers
         self.layer_number = 0
         self.step = 0
+        nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+        nn.init.zeros_(self.bias)
+        print(f"init router weight & bias")
+
 
         # Initialize global tokens per expert for global aux loss
         if self.get_aux_loss_coeff("global_aux_loss") > 0:
@@ -80,7 +85,6 @@ class GptOssTopKRouter(GptOssTopKRouterBase):
         if aux_loss_coeff == 0:
             return probs
         tokens_per_expert = routing_map.sum(dim=0)
-        print(f"{self.step=}, {tokens_per_expert=}")
         num_tokens = routing_map.shape[0]
         total_num_tokens = num_tokens * 1
 
@@ -194,7 +198,6 @@ class GptOssTopKRouter(GptOssTopKRouterBase):
     ):
         """Attach aux loss function to activation and add to logging."""
         num_layers = self.num_hidden_layers
-        print(f"{aux_loss_name}: {aux_loss.detach().item()}")
         save_to_aux_losses_tracker(
             aux_loss_name,
             aux_loss / aux_loss_coeff,
